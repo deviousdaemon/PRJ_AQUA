@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Sprites/Rogue_Default.sprites/roguesheet_default23.tres" type="Texture" id=1]
+[ext_resource path="res://Scripts/ArchitecturePrefab.gd" type="Script" id=2]
+
+[node name="ArchitecturePrefab" type="Sprite"]
+
+self_modulate = Color( 0.522949, 0.574894, 0.597656, 1 )
+texture = ExtResource( 1 )
+centered = false
+script = ExtResource( 2 )
+_sections_unfolded = [ "Offset", "Transform", "Visibility" ]
+
+

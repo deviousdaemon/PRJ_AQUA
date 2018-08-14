@@ -136,7 +136,6 @@ func GenerateCircle(img, x0, y0, radius, colour=BLACK):
     img.set_pixel(x0, y0 - radius, colour)
     img.set_pixel(x0 + radius, y0, colour)
     img.set_pixel(x0 - radius, y0, colour)
- 
     while x < y:
         if f >= 0: 
             y -= 1

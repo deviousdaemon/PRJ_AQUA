@@ -57,6 +57,7 @@ func _process(delta):
 		hasPreparedSeeds=true
 		pass
 	else:
+		set_process(false)
 #		if !hasMadeASprite:
 #
 #			tempImage=GenerateSprite("Creature", null, width, height)

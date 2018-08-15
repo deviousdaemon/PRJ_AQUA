@@ -663,9 +663,12 @@ func SpawnObjectsByPacket(spawnPacket, array):
 							isAreaClear=true
 							break
 						for yy in (worldWidth-1-newArchSize.y):
+							if isAreaClear: break
+#							if worldArray[1][xNow+1][yy-2]!="blank":
+#								checkedCellsValid=0
 							for xx in (worldHeight-1-newArchSize.x):
 								for xIn in newArchSize.x:
-									if checkedCellsValid>=checkedCellsMax:
+									if checkedCellsValid==checkedCellsMax:
 										currentArchSize.x-=newArchSize.x
 										currentArchSize.y-=newArchSize.y
 										curX=xNow
@@ -673,7 +676,7 @@ func SpawnObjectsByPacket(spawnPacket, array):
 										hasCheckedCells=true
 										break
 									else:
-										if checkedCells>=checkedCellsMax:
+										if checkedCells==checkedCellsMax:
 											checkedCells=0
 											checkedCellsValid=0
 											break
@@ -687,10 +690,24 @@ func SpawnObjectsByPacket(spawnPacket, array):
 											checkedCellsValid+=1
 											checkedCells+=1
 											pass
+										if xx==0:
+											checkedCellsValid=0
+										elif yy==0:
+											checkedCellsValid=0
+										if xx+newArchSize.x-1==worldWidth-1:
+											checkedCellsValid=0
+										elif yy+newArchSize.y-1==worldHeight-1:
+											checkedCellsValid=0
+										if worldArray[1][xx+xIn][yy-2]!="blank":
+											checkedCellsValid=0
+										if worldArray[1][xx-2][yy+yIn]!="blank":
+											checkedCellsValid=0
+										if worldArray[1][xx-2][yy-2]!="blank":
+											checkedCellsValid=0
 										pass
 							
 					currentPos=startPos
-					var archArea=(newArchSize.x*newArchSize.y)
+					var archArea=(newArchSize.x)*(newArchSize.y)
 					var nextDir="none"
 					var hasSpawnedWalls=false
 					#TODO Make this variable based on the size of the current arch

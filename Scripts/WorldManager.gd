@@ -27,6 +27,7 @@ var currentSpriteSheetName="Aesomatica"
 var originalGridSize
 var tileSheetWidth=16
 var hasLoaded=false
+var gridFileDebug
 
 #pathfinding shit, Thanks to the Godot team
 onready var aStarNode = AStar.new()
@@ -48,6 +49,13 @@ var spawnPacketArchitecture={}
 var spawnPacketAgent={}
 
 func _ready():
+	#debug
+	gridFileDebug=File.new()
+	if !gridFileDebug.file_exists("res://gridFileDebug.txt"):
+		gridFileDebug.open("res://gridFileDebug.txt", File.WRITE)
+		gridFileDebug.close()
+		pass
+	#debug
 	currentSpriteSheetAtlas.atlas=load("res://Sprites//rogueSheet_"+currentSpriteSheetName+".png")
 	set_process(true)
 	set_process_input(true)
@@ -107,18 +115,18 @@ func _process(delta):
 		#Spawn Packets
 		spawnPacketDefault000["resource"]["tree"]["amount"]=65
 		spawnPacketDefault000["resource"]["bush"]["amount"]=5
-		spawnPacketDefault000["agent"]["humanoid"]["amount"]=3
+		spawnPacketDefault000["agent"]["humanoid"]["amount"]=5
 		for a in spawnPacketDefault000["agent"]["humanoid"]["amount"]:
 			if spawnPacketDefault000["architecture"]["house"]["sizeAmount"].size()==0:
 				var amount=spawnPacketDefault000["agent"]["humanoid"]["amount"]
-				var maxArchSize=Vector2(int((worldWidth/amount)-worldWidth/8),int((worldHeight/amount)-worldHeight/8))
-				var newArchSize=Vector2(int(rand_range(4,maxArchSize.x)),int(rand_range(4,maxArchSize.y)))
+				var maxArchSize=Vector2(5,5)
+				var newArchSize=Vector2(6,6)
 				var newArchSizeText=String(newArchSize.x)+"x"+String(newArchSize.y)
 				spawnPacketDefault000["architecture"]["house"]["sizeAmount"][newArchSizeText]=1
 			else:
 				var amount=spawnPacketDefault000["agent"]["humanoid"]["amount"]
-				var maxArchSize=Vector2(int((worldWidth/amount)-worldWidth/8),int((worldHeight/amount)-worldHeight/8))
-				var newArchSize=Vector2(int(rand_range(4,maxArchSize.x)),int(rand_range(4,maxArchSize.y)))
+				var maxArchSize=Vector2(5,5)
+				var newArchSize=Vector2(6,6)
 				var newArchSizeText=String(newArchSize.x)+"x"+String(newArchSize.y)
 				if spawnPacketDefault000["architecture"]["house"]["sizeAmount"].has(newArchSizeText):
 					spawnPacketDefault000["architecture"]["house"]["sizeAmount"][newArchSizeText]+=1
@@ -162,7 +170,7 @@ func _process(delta):
 func _input(event):
 	if event.is_action_released("ActionSpace"):
 		get_tree().reload_current_scene()
-		RestartGameState()
+		#RestartGameState()
 		pass
 	pass
 
@@ -585,12 +593,13 @@ func SpawnObjectsByPacket(spawnPacket, array):
 			if arrayArchitecture[arch]["sizeAmount"].size()==0:
 				break
 			for sizes in arrayArchitecture[arch]["sizeAmount"].keys():
-				var sizeArray=sizes.split("x",false)
-				totalArchSize.x+=int(sizeArray[0])
-				totalArchSize.y+=int(sizeArray[1])
-				for amount in arrayArchitecture[arch]["sizeAmount"][sizes]: 
-					totalArchs+=1
-				pass
+				for amount in arrayArchitecture[arch]["sizeAmount"][sizes]:
+					var sizeArray=sizes.split("x",false)
+					totalArchSize.x+=int(sizeArray[0])
+					totalArchSize.y+=int(sizeArray[1])
+					for amount in arrayArchitecture[arch]["sizeAmount"][sizes]: 
+						totalArchs+=1
+						
 			if arrayArchitecture[arch]["sizeAmount"].size()>0:
 				availableSpaceTotal.x=worldWidth-totalArchSize.x-1
 				availableSpaceTotal.y=worldHeight-totalArchSize.y-1
@@ -635,90 +644,50 @@ func SpawnObjectsByPacket(spawnPacket, array):
 					var curY=0
 					var checkedCellsMax=0
 					var checkedCells=0
+					var checkedCellsValid=0
 					var currentArchSize=totalArchSize
+					checkedCellsMax=(newArchSize.x)*(newArchSize.y)
+					
 					#TODO Revamp Variance system, Currently the subsequent archs will spawn on the bottom right side of the previous archs,
 					#and if not, throw both an error, and delete  all remaining archs to be built within the arch:dictionary
 					#Idealy, you would just check this in the "Packet Editor" UI, but more exceptions can't hurt ;)
+					#var randPos=Vector2(int(rand_range(0,worldWidth-currentArchSize.x+1)),int(rand_range(0,worldHeight-currentArchSize.y+1)))
+					var xNow=0
+					var yNow=0
 					while !isAreaClear:
-						var randPos=Vector2(int(rand_range(0,worldWidth-1-newArchSize.x)),int(rand_range(0,worldHeight-1-newArchSize.y)))
-						checkedCellsMax=(newArchSize.x*newArchSize.y)
-						for yy in newArchSize.y:
-							for xx in newArchSize.x:
-								if array[1][xx+randPos.x][yy+randPos.y]!="blank":
-									checkedCells=0
-								elif array[1][xx+randPos.x][yy+randPos.y]=="blank":
-									checkedCells+=1
-								if archIndex==0:
-									if randPos.x+(currentArchSize.x-newArchSize.x)>worldWidth:
-										checkedCells=0
-									if randPos.y+(currentArchSize.y-newArchSize.y)>worldHeight:
-										checkedCells=0
-								elif archIndex>1 && archIndex<totalArchs-1:
-									if randPos.x+(currentArchSize.x-newArchSize.x)>worldWidth:
-										checkedCells=0
-									if randPos.y+(currentArchSize.y-newArchSize.y)>worldHeight:
-										checkedCells=0
-									pass
-								#check for buildings around this one
-								#Left
-								if array[1][randPos.x-1+xx][randPos.y+yy]!="blank":
-									checkedCells=0
-								#Right
-								if randPos.x+1+newArchSize.x+xx<worldWidth-1:
-									if array[1][randPos.x+1+newArchSize.x+xx][randPos.y+yy]!="blank":
-										checkedCells=0
-								#Up
-								if array[1][randPos.x+xx][randPos.y-1+yy]!="blank":
-									checkedCells=0
-								#Down
-								if randPos.y+1+newArchSize.y+yy<worldHeight-1:
-									if array[1][randPos.x+xx][randPos.y+1+newArchSize.y+yy]!="blank":
-										checkedCells=0
-								if checkedCells==checkedCellsMax:
-										currentArchSize.x-=newArchSize.x
-										currentArchSize.y-=newArchSize.y
-										curX=randPos.x
-										curY=randPos.y
-										hasCheckedCells=true
-										pass
-								pass
-#						checkedCellsMax=(newArchSize.x*newArchSize.y)
-#						if archSizeGapX[archIndex]==0 && archSizeGapY[archIndex]==0:
-#							pass
-#						elif archSizeGapX[archIndex]==0:
-#							if archSizeGapY[archIndex]>=1:
-#								checkedCellsMax+=archSizeGapY[archIndex]
-#							pass
-#						elif archSizeGapY[archIndex]==0:
-#							if archSizeGapX[archIndex]>=1:
-#								checkedCellsMax+=archSizeGapX[archIndex]
-#							pass
-#						elif archSizeGapY[archIndex]>=1:
-#							if archSizeGapX[archIndex]>=1:
-#								checkedCellsMax+=(archSizeGapX[archIndex]*archSizeGapY[archIndex])
-#							pass
-						if !hasCheckedCells:
-							pass
-#							var tempArchSize=newArchSize
-#							for yy in worldHeight-tempArchSize.y-1:
-#								for xx in worldWidth-tempArchSize.x-1:
-#									for xIn in tempArchSize.x:
-#										for yIn in tempArchSize.y:
-#											if array[1][xx+xIn][yy+yIn]!="blank":
-#												checkedCells=0
-#											elif array[1][xx+xIn][yy+yIn]=="blank":
-#												checkedCells+=1
-#											if checkedCells==checkedCellsMax:
-#													curX=xx+archSizeGapX[archIndex]
-#													curY=yy+archSizeGapY[archIndex]
-#													hasCheckedCells=true
-#													pass
-						elif hasCheckedCells:
+						if hasCheckedCells:
 							startPos.x=curX
 							startPos.y=curY
 							checkedCells=0
+							checkedCellsValid=0
 							isAreaClear=true
-							pass
+							break
+						for yy in (worldWidth-1-newArchSize.y):
+							for xx in (worldHeight-1-newArchSize.x):
+								for xIn in newArchSize.x:
+									if checkedCellsValid>=checkedCellsMax:
+										currentArchSize.x-=newArchSize.x
+										currentArchSize.y-=newArchSize.y
+										curX=xNow
+										curY=yNow
+										hasCheckedCells=true
+										break
+									else:
+										if checkedCells>=checkedCellsMax:
+											checkedCells=0
+											checkedCellsValid=0
+											break
+									for yIn in newArchSize.y:
+										xNow=xx
+										yNow=yy
+										if worldArray[1][xIn+xx][yIn+yy]!="blank":
+											checkedCells+=1
+											checkedCellsValid=0
+										elif worldArray[1][xIn+xx][yIn+yy]=="blank":
+											checkedCellsValid+=1
+											checkedCells+=1
+											pass
+										pass
 							
 					currentPos=startPos
 					var archArea=(newArchSize.x*newArchSize.y)
@@ -1077,14 +1046,30 @@ func SpawnObjectsByPacket(spawnPacket, array):
 											currentArchY=0
 											
 											#end
-											isAreaClear=false
-											hasCheckedCells=false
-											currentBlankX=0
-											currentBlankY=0
-											currentPos=Vector2(0,0)
-											curX=0
-											curY=0
-											checkedCellsMax=0
+											if y==newArchSize.y-3:
+												if x==newArchSize.x-3:
+													if archIndex==totalArchs-1:
+														#debug
+#														var arrayText=""
+#														for array in worldArray[1].size():
+#															arrayText+=String(worldArray[1][array])
+#															arrayText+="\n"
+#															pass
+#														gridFileDebug.open("res://gridFileDebug.txt", File.READ_WRITE)
+#														if gridFileDebug.get_as_text()!=String(arrayText):
+#															gridFileDebug.store_string(String(arrayText))
+#														gridFileDebug.close()
+														#debug
+														pass
+													isAreaClear=false
+													hasCheckedCells=false
+													currentBlankX=0
+													currentBlankY=0
+													currentPos=Vector2(0,0)
+													curX=0
+													curY=0
+													checkedCellsMax=0
+													pass
 											pass 
 										pass 
 									pass
@@ -1097,9 +1082,10 @@ func SpawnObjectsByPacket(spawnPacket, array):
 							
 							pass
 				pass
+			archIndex=-1
 			pass
-		archIndex=-1
-	if !arrayResource.size()==0:
+#	if !arrayResource.size()==0:
+	if arrayResource.size()==0:
 		for resource in arrayResource.keys():
 			if arrayResource[resource]["amount"]>0:
 				match resource:
@@ -1198,7 +1184,8 @@ func SpawnObjectsByPacket(spawnPacket, array):
 #							pass
 				pass
 			pass
-	if !arrayAgent.size()==0:
+	if arrayAgent.size()==0:
+	#if !arrayAgent.size()==0:
 		var currentAgentIndex=0
 		for agent in arrayAgent.keys():
 			if arrayAgent[agent]["amount"]>0:
@@ -1213,7 +1200,7 @@ func SpawnObjectsByPacket(spawnPacket, array):
 							if agentsToSpawn==0:
 								break
 							if worldArray[1][x][y]=="house"+String(currentAgentIndex):
-								var subNode=get_node_at_pos(containerLevel1,Vector2((x*gridSize)*gridScaleRatio,(y*gridSize)*gridScaleRatio))
+								var subNode=GetNodeAtPos(containerLevel1,Vector2(x,y),"GridPosition")
 								if subNode.subType=="Floor":
 									worldArray[2][x][y]=="Agent"
 									#Spawn Object
@@ -1242,9 +1229,17 @@ func SpawnObjectsByPacket(spawnPacket, array):
 			pass
 	pass
 	
-func get_node_at_pos(nodes,pos):
-	for node in nodes.get_children():
-		if node.position == pos:  return node
+func GetNodeAtPos(nodes,pos,mode):
+	match mode:
+		"GridPosition":
+			for node in nodes.get_children():
+				if node.gridPosition == pos:  return node
+			pass
+		"NodePosition":
+			for node in nodes.get_children():
+				if node.position == pos:
+					return node
+			pass
 		
 func RestartGameState():
 	for c in containerLevel0.get_children():

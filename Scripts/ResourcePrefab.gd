@@ -6,7 +6,7 @@ extends Sprite
 var type=""
 var subType=""
 var spriteColor=Color(0,0,0,255)
-var spriteColorDefault=Color(0,0,0,255)
+var spriteColorDefault=Color(255,255,255,255)
 var spriteAtlas
 var spriteAtlasRegion=Vector2()
 var spriteResource
@@ -52,6 +52,14 @@ func _process(delta):
 		worldManager.connect("worldStep", self, "OnWorldStep")
 		
 		name=String(gridPosition.x)+","+String(gridPosition.y)+"-"+type+"_"+subType
+		
+		
+		#debug
+#		spriteAtlasRegion=Vector2(14,15)
+#		spriteAtlas.region=Rect2(spriteAtlasRegion,Vector2(worldManager.originalGridSize,worldManager.originalGridSize))
+#		spriteResource=spriteAtlas
+#		texture=spriteResource
+#		self_modulate=spriteColorDefault
 		
 		#end
 		readyToStart=2

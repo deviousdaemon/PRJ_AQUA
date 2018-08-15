@@ -3,10 +3,10 @@ extends Sprite
 # class member variables go here, for example:
 # var a = 2
 # var b = "textvar"
-var type=""
+var type="Arch"
 var subType=""
 var spriteColor=Color(0,0,0,255)
-var spriteColorDefault=Color(0,0,0,255)
+var spriteColorDefault=Color(25,25,25,255)
 var spriteAtlas
 var spriteAtlasRegion=Vector2()
 var spriteResource
@@ -52,6 +52,19 @@ func _process(delta):
 		worldManager.connect("worldStep", self, "OnWorldStep")
 		
 		name=String(gridPosition.x)+","+String(gridPosition.y)+"-"+type+"_"+subType
+		
+		
+		
+#		#debug
+#		spriteAtlas.atlas=spriteAtlasCopy.atlas
+#		spriteAtlasRegion=Vector2(14,15)
+#		spriteAtlasRegion.x*=worldManager.originalGridSize
+#		spriteAtlasRegion.y*=worldManager.originalGridSize
+#		spriteAtlas.region=Rect2(spriteAtlasRegion,Vector2(worldManager.originalGridSize,worldManager.originalGridSize))
+#		spriteResource=spriteAtlas
+#		texture=spriteResource
+#		self_modulate=spriteColor
+		
 		
 		#end
 		readyToStart=2

@@ -22,6 +22,10 @@ var agentName=""
 
 var stepEnabled=false
 
+#subtype specific vars
+	#human
+
+
 onready var mainNode=get_tree().get_root().get_child(0)
 onready var worldManager=mainNode.find_node("WorldManager")
 

@@ -6,8 +6,12 @@ extends Label
 var checkFPSTime=0.2
 var currFPS=""
 var timer=0
+var mainNode
+var worldManager
 
 func _ready():
+	mainNode=get_tree().get_root().get_child(0)
+	worldManager=mainNode.find_node("WorldManager")
 	# Called when the node is added to the scene for the first time.
 	# Initialization here
 	set_process(true)

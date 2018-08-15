@@ -3,7 +3,7 @@
 [ext_resource path="res://Sprites/Rogue_Default.sprites/roguesheet_default2.tres" type="Texture" id=1]
 [ext_resource path="res://Scripts/AgentPrefab.gd" type="Script" id=2]
 
-[node name="AgentPrefab" type="Sprite" index="0"]
+[node name="AgentPrefab" type="Sprite"]
 
 texture = ExtResource( 1 )
 centered = false

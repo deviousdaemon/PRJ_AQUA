@@ -13,7 +13,7 @@ var displayHeight
 var fullscreenEnabled=false
 var borderlessWindow=false
 var windowResizeable=false
-var vsyncEnabled=true
+var vsyncEnabled=false
 
 func _ready():
 	# Called when the node is added to the scene for the first time.

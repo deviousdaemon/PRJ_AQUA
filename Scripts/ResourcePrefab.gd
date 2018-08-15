@@ -62,6 +62,8 @@ func _process(delta):
 #		self_modulate=spriteColorDefault
 		
 		#end
+		if worldManager.worldArray[1][gridPosition.x][gridPosition.y]!="blank":
+			visible=false
 		readyToStart=2
 		pass
 	pass

@@ -115,18 +115,18 @@ func _process(delta):
 		#Spawn Packets
 		spawnPacketDefault000["resource"]["tree"]["amount"]=65
 		spawnPacketDefault000["resource"]["bush"]["amount"]=5
-		spawnPacketDefault000["agent"]["humanoid"]["amount"]=9
+		spawnPacketDefault000["agent"]["humanoid"]["amount"]=8
 		for a in spawnPacketDefault000["agent"]["humanoid"]["amount"]:
 			if spawnPacketDefault000["architecture"]["house"]["sizeAmount"].size()==0:
 				var amount=spawnPacketDefault000["agent"]["humanoid"]["amount"]
 				var maxArchSize=Vector2(5,5)
-				var newArchSize=Vector2(6,6)
+				var newArchSize=Vector2(int(rand_range(5,8)),int(rand_range(5,8)))
 				var newArchSizeText=String(newArchSize.x)+"x"+String(newArchSize.y)
 				spawnPacketDefault000["architecture"]["house"]["sizeAmount"][newArchSizeText]=1
 			else:
 				var amount=spawnPacketDefault000["agent"]["humanoid"]["amount"]
 				var maxArchSize=Vector2(5,5)
-				var newArchSize=Vector2(6,6)
+				var newArchSize=Vector2(int(rand_range(5,8)),int(rand_range(5,8)))
 				var newArchSizeText=String(newArchSize.x)+"x"+String(newArchSize.y)
 				if spawnPacketDefault000["architecture"]["house"]["sizeAmount"].has(newArchSizeText):
 					spawnPacketDefault000["architecture"]["house"]["sizeAmount"][newArchSizeText]+=1
@@ -597,8 +597,7 @@ func SpawnObjectsByPacket(spawnPacket, array):
 					var sizeArray=sizes.split("x",false)
 					totalArchSize.x+=int(sizeArray[0])
 					totalArchSize.y+=int(sizeArray[1])
-					for amount in arrayArchitecture[arch]["sizeAmount"][sizes]: 
-						totalArchs+=1
+					totalArchs+=1
 						
 			if arrayArchitecture[arch]["sizeAmount"].size()>0:
 				availableSpaceTotal.x=worldWidth-totalArchSize.x-1
@@ -663,50 +662,89 @@ func SpawnObjectsByPacket(spawnPacket, array):
 							checkedCells=0
 							checkedCellsValid=0
 							isAreaClear=true
-							print(curX," ",curY)
-							break
 						for yy in (worldHeight-1-newArchSize.y):
 							if isAreaClear: break
+							if hasCheckedCells: break
+							yNow=yy
 							for xx in (worldWidth-1-newArchSize.x):
-								if xx==0 && yy==0:
-									checkedCellsValid=0
-								elif yNow==0:
-									checkedCellsValid=0
-									checkedCells=0
-								elif xNow==0:
-									checkedCellsValid=0
-									checkedCells=0
-								if worldArray[1][xx+xInNow][yNow-1]!="blank":
-									checkedCellsValid=0
-									checkedCells=0
-								elif worldArray[1][xNow-1][yy+yInNow]!="blank":
-									checkedCellsValid=0
-									checkedCells=0
+								if isAreaClear: break
+								if hasCheckedCells: break
+								xNow=xx
 								for yIn in newArchSize.y:
-									if checkedCellsValid==checkedCellsMax:
-										currentArchSize.x-=newArchSize.x
-										currentArchSize.y-=newArchSize.y
-										curX=xNow
-										curY=yNow
-										hasCheckedCells=true
-										break
-									else:
-										if checkedCells==checkedCellsMax:
-											checkedCells=0
-											checkedCellsValid=0
-											break
+									if isAreaClear: break
+									if hasCheckedCells: break
+									if worldArray[1][xx-1][yy+yIn]!="blank":
+										checkedCellsValid=0
+										checkedCells=0
+									if worldArray[1][xx-1][yy]!="blank":
+										checkedCellsValid=0
+										checkedCells=0
+									if worldArray[1][xx+newArchSize.x+1][yy]!="blank":
+										checkedCellsValid=0
+										checkedCells=0
+									if worldArray[1][xx+newArchSize.x+1][yy+yIn]!="blank":
+										checkedCellsValid=0
+										checkedCells=0
+									if worldArray[1][xx+xInNow-1][yy+newArchSize.y]!="blank":
+										checkedCellsValid=0
+										checkedCells=0
+									if worldArray[1][xx-1][yy+newArchSize.y]!="blank":
+										checkedCellsValid=0
+										checkedCells=0
+									yInNow=yIn
 									for xIn in newArchSize.x:
-										xNow=xx
-										yNow=yy
+										if isAreaClear: break
+										if hasCheckedCells: break
 										xInNow=xIn
-										yInNow=yIn
-										if worldArray[1][xIn+xx][yIn+yy]!="blank":
+										if worldArray[1][xx+xIn][yy+yIn]!="blank":
 											checkedCells+=1
 											checkedCellsValid=0
-										elif worldArray[1][xIn+xx][yIn+yy]=="blank":
+										elif worldArray[1][xx+xIn][yy+yIn]=="blank":
 											checkedCellsValid+=1
 											checkedCells+=1
-											pass
+										if worldArray[1][xx+xInNow][yy-1]!="blank":
+											checkedCellsValid=0
+											checkedCells=0
+										if worldArray[1][xx][yy-1]!="blank":
+											checkedCellsValid=0
+											checkedCells=0
+										if worldArray[1][xx-1][yy-1]!="blank":
+											checkedCellsValid=0
+											checkedCells=0
+										if worldArray[1][xx][yy+newArchSize.y+1]!="blank":
+											checkedCellsValid=0
+											checkedCells=0
+										if worldArray[1][xx+xIn][yy+newArchSize.y+1]!="blank":
+											checkedCellsValid=0
+											checkedCells=0
+										if worldArray[1][xx+newArchSize.x+1][yy+newArchSize.y+1]!="blank":
+											checkedCellsValid=0
+											checkedCells=0
+										if worldArray[1][xx+newArchSize.x][yy-1]!="blank":
+											checkedCellsValid=0
+											checkedCells=0
+										if worldArray[1][xx+newArchSize.x][yy+yIn-1]!="blank":
+											checkedCellsValid=0
+											checkedCells=0
+										if xx==0 && yy==0:
+											checkedCellsValid=0
+										elif yy==0:
+											checkedCellsValid=0
+										elif xx==0:
+											checkedCellsValid=0
+										if checkedCellsValid==checkedCellsMax:
+											currentArchSize.x-=newArchSize.x
+											currentArchSize.y-=newArchSize.y
+											curX=xx
+											curY=yy
+											checkedCellsValid+=1
+											if archIndex==totalArchs-1:
+												print(worldArray[1][0][0])
+											hasCheckedCells=true
+										else:
+											if checkedCells==checkedCellsMax:
+												checkedCells=0
+												checkedCellsValid=0
 										pass
 							
 					currentPos=startPos
@@ -1146,7 +1184,6 @@ func SpawnObjectsByPacket(spawnPacket, array):
 #								if worldArray[1][randPos.x][randPos.y]=="blank":
 #									if worldArray[0][randPos.x][randPos.y]=="dirt":
 #										isClear=true
-#										print("yah")
 #										pass
 #									else:
 #										randPos=Vector2(int(rand_range(0,worldWidth-1)),int(rand_range(0,worldHeight-1)))
@@ -1204,8 +1241,8 @@ func SpawnObjectsByPacket(spawnPacket, array):
 #							pass
 				pass
 			pass
-	#if arrayAgent.size()==0:
-	if !arrayAgent.size()==0:
+	if arrayAgent.size()==0:
+	#if !arrayAgent.size()==0:
 		var currentAgentIndex=0
 		for agent in arrayAgent.keys():
 			if arrayAgent[agent]["amount"]>0:

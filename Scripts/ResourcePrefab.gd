@@ -27,6 +27,7 @@ onready var worldManager=mainNode.find_node("WorldManager")
 func _ready():
 	# Called when the node is added to the scene for the first time.
 	# Initialization here
+	visible=false
 	set_process(true)
 	pass
 
@@ -50,7 +51,7 @@ func _process(delta):
 		self_modulate=spriteColor
 		scale=Vector2(spriteScale,spriteScale)
 		worldManager.connect("worldStep", self, "OnWorldStep")
-		
+		visible=true
 		name=String(gridPosition.x)+","+String(gridPosition.y)+"-"+type+"_"+subType
 		
 		

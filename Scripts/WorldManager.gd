@@ -115,7 +115,7 @@ func _process(delta):
 		#Spawn Packets
 		spawnPacketDefault000["resource"]["tree"]["amount"]=65
 		spawnPacketDefault000["resource"]["bush"]["amount"]=5
-		spawnPacketDefault000["agent"]["humanoid"]["amount"]=5
+		spawnPacketDefault000["agent"]["humanoid"]["amount"]=9
 		for a in spawnPacketDefault000["agent"]["humanoid"]["amount"]:
 			if spawnPacketDefault000["architecture"]["house"]["sizeAmount"].size()==0:
 				var amount=spawnPacketDefault000["agent"]["humanoid"]["amount"]
@@ -654,6 +654,8 @@ func SpawnObjectsByPacket(spawnPacket, array):
 					#var randPos=Vector2(int(rand_range(0,worldWidth-currentArchSize.x+1)),int(rand_range(0,worldHeight-currentArchSize.y+1)))
 					var xNow=0
 					var yNow=0
+					var xInNow=0
+					var yInNow=0
 					while !isAreaClear:
 						if hasCheckedCells:
 							startPos.x=curX
@@ -661,13 +663,26 @@ func SpawnObjectsByPacket(spawnPacket, array):
 							checkedCells=0
 							checkedCellsValid=0
 							isAreaClear=true
+							print(curX," ",curY)
 							break
-						for yy in (worldWidth-1-newArchSize.y):
+						for yy in (worldHeight-1-newArchSize.y):
 							if isAreaClear: break
-#							if worldArray[1][xNow+1][yy-2]!="blank":
-#								checkedCellsValid=0
-							for xx in (worldHeight-1-newArchSize.x):
-								for xIn in newArchSize.x:
+							for xx in (worldWidth-1-newArchSize.x):
+								if xx==0 && yy==0:
+									checkedCellsValid=0
+								elif yNow==0:
+									checkedCellsValid=0
+									checkedCells=0
+								elif xNow==0:
+									checkedCellsValid=0
+									checkedCells=0
+								if worldArray[1][xx+xInNow][yNow-1]!="blank":
+									checkedCellsValid=0
+									checkedCells=0
+								elif worldArray[1][xNow-1][yy+yInNow]!="blank":
+									checkedCellsValid=0
+									checkedCells=0
+								for yIn in newArchSize.y:
 									if checkedCellsValid==checkedCellsMax:
 										currentArchSize.x-=newArchSize.x
 										currentArchSize.y-=newArchSize.y
@@ -680,9 +695,11 @@ func SpawnObjectsByPacket(spawnPacket, array):
 											checkedCells=0
 											checkedCellsValid=0
 											break
-									for yIn in newArchSize.y:
+									for xIn in newArchSize.x:
 										xNow=xx
 										yNow=yy
+										xInNow=xIn
+										yInNow=yIn
 										if worldArray[1][xIn+xx][yIn+yy]!="blank":
 											checkedCells+=1
 											checkedCellsValid=0
@@ -690,20 +707,6 @@ func SpawnObjectsByPacket(spawnPacket, array):
 											checkedCellsValid+=1
 											checkedCells+=1
 											pass
-										if xx==0:
-											checkedCellsValid=0
-										elif yy==0:
-											checkedCellsValid=0
-										if xx+newArchSize.x-1==worldWidth-1:
-											checkedCellsValid=0
-										elif yy+newArchSize.y-1==worldHeight-1:
-											checkedCellsValid=0
-										if worldArray[1][xx+xIn][yy-2]!="blank":
-											checkedCellsValid=0
-										if worldArray[1][xx-2][yy+yIn]!="blank":
-											checkedCellsValid=0
-										if worldArray[1][xx-2][yy-2]!="blank":
-											checkedCellsValid=0
 										pass
 							
 					currentPos=startPos
@@ -1101,8 +1104,8 @@ func SpawnObjectsByPacket(spawnPacket, array):
 				pass
 			archIndex=-1
 			pass
-#	if !arrayResource.size()==0:
-	if arrayResource.size()==0:
+	if !arrayResource.size()==0:
+#	if arrayResource.size()==0:
 		for resource in arrayResource.keys():
 			if arrayResource[resource]["amount"]>0:
 				match resource:
@@ -1201,8 +1204,8 @@ func SpawnObjectsByPacket(spawnPacket, array):
 #							pass
 				pass
 			pass
-	if arrayAgent.size()==0:
-	#if !arrayAgent.size()==0:
+	#if arrayAgent.size()==0:
+	if !arrayAgent.size()==0:
 		var currentAgentIndex=0
 		for agent in arrayAgent.keys():
 			if arrayAgent[agent]["amount"]>0:

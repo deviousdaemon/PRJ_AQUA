@@ -27,6 +27,7 @@ var currentSpriteSheetName="Aesomatica"
 var originalGridSize
 var tileSheetWidth=16
 var hasLoaded=false
+var config
 var gridFileDebug
 
 #pathfinding shit, Thanks to the Godot team
@@ -56,6 +57,8 @@ func _ready():
 		gridFileDebug.close()
 		pass
 	#debug
+	mainNode=get_tree().get_root().get_child(0)
+	config=mainNode.find_node("ConfigManager")
 	currentSpriteSheetAtlas.atlas=load("res://Sprites//rogueSheet_"+currentSpriteSheetName+".png")
 	set_process(true)
 	set_process_input(true)
@@ -66,15 +69,15 @@ func _process(delta):
 	# Called every frame. Delta is time since last frame.
 	# Update game logic here.
 	if !hasLoaded:
-		windowSize=OS.window_size
+		windowSize=config.resolution
+		startingPosition=Vector2(config.displayWidthOffset,config.displayHeightOffset)
 		originalGridSize=currentSpriteSheetAtlas.atlas.get_width()/tileSheetWidth
-		mainNode=get_tree().get_root().get_child(0)
 		entityContainer=mainNode.find_node("EntityContainer")
 		containerLevel0=entityContainer.find_node("Level0")
 		containerLevel1=entityContainer.find_node("Level1")
 		containerLevel2=entityContainer.find_node("Level2")
 		
-		gridScaleRatio=windowSize.x/worldWidth/gridSize
+		gridScaleRatio=Vector2(windowSize.x/worldWidth/gridSize,windowSize.y/worldHeight/gridSize)
 		#Init Spawn Packets
 		spawnPacketDefault000= {
 			"architecture":{
@@ -115,18 +118,18 @@ func _process(delta):
 		#Spawn Packets
 		spawnPacketDefault000["resource"]["tree"]["amount"]=65
 		spawnPacketDefault000["resource"]["bush"]["amount"]=5
-		spawnPacketDefault000["agent"]["humanoid"]["amount"]=13
+		spawnPacketDefault000["agent"]["humanoid"]["amount"]=6
 		for a in spawnPacketDefault000["agent"]["humanoid"]["amount"]:
 			if spawnPacketDefault000["architecture"]["house"]["sizeAmount"].size()==0:
 				var amount=spawnPacketDefault000["agent"]["humanoid"]["amount"]
 				var maxArchSize=Vector2(5,5)
-				var newArchSize=Vector2(int(rand_range(5,8)),int(rand_range(5,8)))
+				var newArchSize=Vector2(int(rand_range(4,9)),int(rand_range(4,9)))
 				var newArchSizeText=String(newArchSize.x)+"x"+String(newArchSize.y)
 				spawnPacketDefault000["architecture"]["house"]["sizeAmount"][newArchSizeText]=1
 			else:
 				var amount=spawnPacketDefault000["agent"]["humanoid"]["amount"]
 				var maxArchSize=Vector2(5,5)
-				var newArchSize=Vector2(int(rand_range(5,8)),int(rand_range(5,8)))
+				var newArchSize=Vector2(int(rand_range(4,9)),int(rand_range(4,9)))
 				var newArchSizeText=String(newArchSize.x)+"x"+String(newArchSize.y)
 				if spawnPacketDefault000["architecture"]["house"]["sizeAmount"].has(newArchSizeText):
 					spawnPacketDefault000["architecture"]["house"]["sizeAmount"][newArchSizeText]+=1
@@ -442,7 +445,7 @@ func GenerateBottomLevelPrefabs(var array):
 				newAgent.spriteColor=NewColor(166,65,20,255)
 				newAgent.gridPosition=Vector2(x,y)
 				newAgent.amount=100
-				newAgent.position=Vector2((startingPosition.x+(x*gridSize))*gridScaleRatio,(startingPosition.y+(y*gridSize))*gridScaleRatio)
+				newAgent.position=Vector2((startingPosition.x+(x*gridSize)),(startingPosition.y+(y*gridSize)))
 				containerLevel0.add_child(newAgent)
 				newAgent.readyToStart=1
 				#debug
@@ -455,7 +458,7 @@ func GenerateBottomLevelPrefabs(var array):
 				newAgent.spriteColor=NewColor(61,102,164,255)
 				newAgent.gridPosition=Vector2(x,y)
 				newAgent.amount=100
-				newAgent.position=Vector2((startingPosition.x+(x*gridSize))*gridScaleRatio,(startingPosition.y+(y*gridSize))*gridScaleRatio)
+				newAgent.position=Vector2((startingPosition.x+(x*gridSize)),(startingPosition.y+(y*gridSize)))
 				containerLevel0.add_child(newAgent)
 				newAgent.readyToStart=1
 
@@ -775,7 +778,7 @@ func SpawnObjectsByPacket(spawnPacket, array):
 										newAgent.spriteColor=NewColor(209,206,207,255)
 										newAgent.gridPosition=Vector2(currentPos.x,currentPos.y)
 										newAgent.condition=100
-										newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize))*gridScaleRatio,(startingPosition.y+(currentPos.y*gridSize))*gridScaleRatio)
+										newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize)),(startingPosition.y+(currentPos.y*gridSize)))
 										containerLevel1.add_child(newAgent)
 										newAgent.readyToStart=1
 										currentPos.x+=1
@@ -797,7 +800,7 @@ func SpawnObjectsByPacket(spawnPacket, array):
 													newAgent.spriteColor=NewColor(209,206,207,255)
 													newAgent.gridPosition=Vector2(currentPos.x,currentPos.y)
 													newAgent.condition=100
-													newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize))*gridScaleRatio,(startingPosition.y+(currentPos.y*gridSize))*gridScaleRatio)
+													newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize)),(startingPosition.y+(currentPos.y*gridSize)))
 													containerLevel1.add_child(newAgent)
 													newAgent.readyToStart=1
 													currentPos.y+=1
@@ -814,7 +817,7 @@ func SpawnObjectsByPacket(spawnPacket, array):
 															newAgent.spriteColor=NewColor(209,206,207,255)
 															newAgent.gridPosition=Vector2(currentPos.x,currentPos.y)
 															newAgent.condition=100
-															newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize))*gridScaleRatio,(startingPosition.y+(currentPos.y*gridSize))*gridScaleRatio)
+															newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize)),(startingPosition.y+(currentPos.y*gridSize)))
 															containerLevel1.add_child(newAgent)
 															newAgent.readyToStart=1
 															currentArchX+=1
@@ -830,7 +833,7 @@ func SpawnObjectsByPacket(spawnPacket, array):
 															newAgent.spriteColor=NewColor(209,206,207,255)
 															newAgent.gridPosition=Vector2(currentPos.x,currentPos.y)
 															newAgent.condition=100
-															newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize))*gridScaleRatio,(startingPosition.y+(currentPos.y*gridSize))*gridScaleRatio)
+															newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize)),(startingPosition.y+(currentPos.y*gridSize)))
 															containerLevel1.add_child(newAgent)
 															newAgent.readyToStart=1
 															currentArchX+=1
@@ -846,7 +849,7 @@ func SpawnObjectsByPacket(spawnPacket, array):
 														newAgent.spriteColor=NewColor(209,206,207,255)
 														newAgent.gridPosition=Vector2(currentPos.x,currentPos.y)
 														newAgent.condition=100
-														newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize))*gridScaleRatio,(startingPosition.y+(currentPos.y*gridSize))*gridScaleRatio)
+														newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize)),(startingPosition.y+(currentPos.y*gridSize)))
 														containerLevel1.add_child(newAgent)
 														newAgent.readyToStart=1
 														currentArchX+=1
@@ -865,7 +868,7 @@ func SpawnObjectsByPacket(spawnPacket, array):
 													newAgent.spriteColor=NewColor(209,206,207,255)
 													newAgent.gridPosition=Vector2(currentPos.x,currentPos.y)
 													newAgent.condition=100
-													newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize))*gridScaleRatio,(startingPosition.y+(currentPos.y*gridSize))*gridScaleRatio)
+													newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize)),(startingPosition.y+(currentPos.y*gridSize)))
 													containerLevel1.add_child(newAgent)
 													newAgent.readyToStart=1
 													nextDir="left"
@@ -882,7 +885,7 @@ func SpawnObjectsByPacket(spawnPacket, array):
 															newAgent.spriteColor=NewColor(209,206,207,255)
 															newAgent.gridPosition=Vector2(currentPos.x,currentPos.y)
 															newAgent.condition=100
-															newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize))*gridScaleRatio,(startingPosition.y+(currentPos.y*gridSize))*gridScaleRatio)
+															newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize)),(startingPosition.y+(currentPos.y*gridSize)))
 															containerLevel1.add_child(newAgent)
 															newAgent.readyToStart=1
 															currentArchY+=1
@@ -898,7 +901,7 @@ func SpawnObjectsByPacket(spawnPacket, array):
 															newAgent.spriteColor=NewColor(209,206,207,255)
 															newAgent.gridPosition=Vector2(currentPos.x,currentPos.y)
 															newAgent.condition=100
-															newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize))*gridScaleRatio,(startingPosition.y+(currentPos.y*gridSize))*gridScaleRatio)
+															newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize)),(startingPosition.y+(currentPos.y*gridSize)))
 															containerLevel1.add_child(newAgent)
 															newAgent.readyToStart=1
 															currentArchY+=1
@@ -913,7 +916,7 @@ func SpawnObjectsByPacket(spawnPacket, array):
 														newAgent.spriteColor=NewColor(209,206,207,255)
 														newAgent.gridPosition=Vector2(currentPos.x,currentPos.y)
 														newAgent.condition=100
-														newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize))*gridScaleRatio,(startingPosition.y+(currentPos.y*gridSize))*gridScaleRatio)
+														newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize)),(startingPosition.y+(currentPos.y*gridSize)))
 														containerLevel1.add_child(newAgent)
 														newAgent.readyToStart=1
 														currentArchY+=1
@@ -932,7 +935,7 @@ func SpawnObjectsByPacket(spawnPacket, array):
 													newAgent.spriteColor=NewColor(209,206,207,255)
 													newAgent.gridPosition=Vector2(currentPos.x,currentPos.y)
 													newAgent.condition=100
-													newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize))*gridScaleRatio,(startingPosition.y+(currentPos.y*gridSize))*gridScaleRatio)
+													newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize)),(startingPosition.y+(currentPos.y*gridSize)))
 													containerLevel1.add_child(newAgent)
 													newAgent.readyToStart=1
 													nextDir="up"
@@ -949,7 +952,7 @@ func SpawnObjectsByPacket(spawnPacket, array):
 															newAgent.spriteColor=NewColor(209,206,207,255)
 															newAgent.gridPosition=Vector2(currentPos.x,currentPos.y)
 															newAgent.condition=100
-															newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize))*gridScaleRatio,(startingPosition.y+(currentPos.y*gridSize))*gridScaleRatio)
+															newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize)),(startingPosition.y+(currentPos.y*gridSize)))
 															containerLevel1.add_child(newAgent)
 															newAgent.readyToStart=1
 															currentArchX+=1
@@ -965,7 +968,7 @@ func SpawnObjectsByPacket(spawnPacket, array):
 															newAgent.spriteColor=NewColor(209,206,207,255)
 															newAgent.gridPosition=Vector2(currentPos.x,currentPos.y)
 															newAgent.condition=100
-															newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize))*gridScaleRatio,(startingPosition.y+(currentPos.y*gridSize))*gridScaleRatio)
+															newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize)),(startingPosition.y+(currentPos.y*gridSize)))
 															containerLevel1.add_child(newAgent)
 															newAgent.readyToStart=1
 															currentArchX+=1
@@ -980,7 +983,7 @@ func SpawnObjectsByPacket(spawnPacket, array):
 														newAgent.spriteColor=NewColor(209,206,207,255)
 														newAgent.gridPosition=Vector2(currentPos.x,currentPos.y)
 														newAgent.condition=100
-														newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize))*gridScaleRatio,(startingPosition.y+(currentPos.y*gridSize))*gridScaleRatio)
+														newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize)),(startingPosition.y+(currentPos.y*gridSize)))
 														containerLevel1.add_child(newAgent)
 														newAgent.readyToStart=1
 														currentArchX+=1
@@ -1001,7 +1004,7 @@ func SpawnObjectsByPacket(spawnPacket, array):
 														newAgent.spriteColor=NewColor(209,206,207,255)
 														newAgent.gridPosition=Vector2(currentPos.x,currentPos.y)
 														newAgent.condition=100
-														newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize))*gridScaleRatio,(startingPosition.y+(currentPos.y*gridSize))*gridScaleRatio)
+														newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize)),(startingPosition.y+(currentPos.y*gridSize)))
 														containerLevel1.add_child(newAgent)
 														newAgent.readyToStart=1
 														hasSpawnedWalls=true
@@ -1016,7 +1019,7 @@ func SpawnObjectsByPacket(spawnPacket, array):
 														newAgent.spriteColor=NewColor(209,206,207,255)
 														newAgent.gridPosition=Vector2(currentPos.x,currentPos.y)
 														newAgent.condition=100
-														newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize))*gridScaleRatio,(startingPosition.y+(currentPos.y*gridSize))*gridScaleRatio)
+														newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize)),(startingPosition.y+(currentPos.y*gridSize)))
 														containerLevel1.add_child(newAgent)
 														newAgent.readyToStart=1
 														hasSpawnedWalls=true
@@ -1032,7 +1035,7 @@ func SpawnObjectsByPacket(spawnPacket, array):
 															newAgent.spriteColor=NewColor(209,206,207,255)
 															newAgent.gridPosition=Vector2(currentPos.x,currentPos.y)
 															newAgent.condition=100
-															newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize))*gridScaleRatio,(startingPosition.y+(currentPos.y*gridSize))*gridScaleRatio)
+															newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize)),(startingPosition.y+(currentPos.y*gridSize)))
 															containerLevel1.add_child(newAgent)
 															newAgent.readyToStart=1
 															currentArchY+=1
@@ -1048,7 +1051,7 @@ func SpawnObjectsByPacket(spawnPacket, array):
 															newAgent.spriteColor=NewColor(209,206,207,255)
 															newAgent.gridPosition=Vector2(currentPos.x,currentPos.y)
 															newAgent.condition=100
-															newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize))*gridScaleRatio,(startingPosition.y+(currentPos.y*gridSize))*gridScaleRatio)
+															newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize)),(startingPosition.y+(currentPos.y*gridSize)))
 															containerLevel1.add_child(newAgent)
 															newAgent.readyToStart=1
 															currentArchY+=1
@@ -1063,7 +1066,7 @@ func SpawnObjectsByPacket(spawnPacket, array):
 														newAgent.spriteColor=NewColor(209,206,207,255)
 														newAgent.gridPosition=Vector2(currentPos.x,currentPos.y)
 														newAgent.condition=100
-														newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize))*gridScaleRatio,(startingPosition.y+(currentPos.y*gridSize))*gridScaleRatio)
+														newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize)),(startingPosition.y+(currentPos.y*gridSize)))
 														containerLevel1.add_child(newAgent)
 														newAgent.readyToStart=1
 														currentArchY+=1
@@ -1096,7 +1099,7 @@ func SpawnObjectsByPacket(spawnPacket, array):
 											newAgent.spriteColor=NewColor(209,206,207,255)
 											newAgent.gridPosition=Vector2(xx,yy)
 											newAgent.condition=100
-											newAgent.position=Vector2((startingPosition.x+(xx*gridSize))*gridScaleRatio,(startingPosition.y+(yy*gridSize))*gridScaleRatio)
+											newAgent.position=Vector2((startingPosition.x+(xx*gridSize)),(startingPosition.y+(yy*gridSize)))
 											containerLevel1.add_child(newAgent)
 											newAgent.readyToStart=1
 											currentArchCount+=1
@@ -1165,7 +1168,7 @@ func SpawnObjectsByPacket(spawnPacket, array):
 												newAgent.spriteColor=NewColor(38,136,82,255)
 												newAgent.gridPosition=Vector2(x,y)
 												newAgent.amount=100
-												newAgent.position=Vector2((x*gridSize)*gridScaleRatio,(y*gridSize)*gridScaleRatio)
+												newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize)),(startingPosition.y+(currentPos.y*gridSize)))
 												containerLevel1.add_child(newAgent)
 												newAgent.readyToStart=1
 												#end
@@ -1275,7 +1278,7 @@ func SpawnObjectsByPacket(spawnPacket, array):
 									#Color(209,206,207,255)
 									newAgent.spriteColor=NewColor(178,164,140,255)
 									newAgent.gridPosition=Vector2(x,y)
-									newAgent.position=Vector2((x*gridSize)*gridScaleRatio,(y*gridSize)*gridScaleRatio)
+									newAgent.position=Vector2((x*gridSize)+startingPosition.x,(startingPosition.y+(y*gridSize)))
 									containerLevel2.add_child(newAgent)
 									newAgent.readyToStart=1
 									#end

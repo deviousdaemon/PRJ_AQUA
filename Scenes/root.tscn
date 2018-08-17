@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://Scripts/main.gd" type="Script" id=1]
 [ext_resource path="res://Scripts/GDStats.gd" type="Script" id=2]
@@ -13,6 +13,7 @@
 [ext_resource path="res://Fonts/ShareTechMono.tres" type="DynamicFont" id=11]
 [ext_resource path="res://Scripts/DebugText.gd" type="Script" id=12]
 [ext_resource path="res://Scripts/SpriteGenerator.gd" type="Script" id=13]
+[ext_resource path="res://Scripts/CameraMain.gd" type="Script" id=14]
 
 [node name="main" type="Node" index="0"]
 
@@ -126,5 +127,34 @@ _sections_unfolded = [ "Rect", "custom_constants", "custom_fonts" ]
 [node name="SpriteGenerator" type="Node" parent="." index="8"]
 
 script = ExtResource( 13 )
+
+[node name="CameraMain" type="Camera2D" parent="." index="9"]
+
+position = Vector2( 256, 256 )
+scale = Vector2( 8, 8 )
+anchor_mode = 1
+rotating = false
+current = true
+zoom = Vector2( 1, 1 )
+limit_left = -4096
+limit_top = -4096
+limit_right = 4096
+limit_bottom = 4096
+limit_smoothed = true
+drag_margin_h_enabled = true
+drag_margin_v_enabled = false
+smoothing_enabled = false
+smoothing_speed = 5.0
+offset_v = 0.0
+offset_h = 0.0
+drag_margin_left = 0.25
+drag_margin_top = 0.25
+drag_margin_right = 0.25
+drag_margin_bottom = 0.25
+editor_draw_screen = false
+editor_draw_limits = false
+editor_draw_drag_margin = false
+script = ExtResource( 14 )
+_sections_unfolded = [ "Drag Margin", "Editor", "Limit", "Offset", "Transform" ]
 
 

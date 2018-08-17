@@ -38,7 +38,7 @@ func _process(delta):
 		gridScaleRatio=worldManager.gridScaleRatio
 		spriteSize=texture.get_width()
 		gridSize=worldManager.gridSize
-		spriteScale=gridSize/spriteSize*gridScaleRatio
+		spriteScale=gridSize/spriteSize*gridScaleRatio.x
 		currentSpriteSheetName=worldManager.currentSpriteSheetName
 		spriteAtlasRegion.x*=worldManager.originalGridSize
 		spriteAtlasRegion.y*=worldManager.originalGridSize

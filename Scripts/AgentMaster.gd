@@ -6,7 +6,6 @@ extends Node2D
 var selfStep=false
 var agentList=[]
 var movementRegistry=[]
-onready var agentPrefab=preload("res://Prefabs//Agent_Prefab.tscn")
 var agentsToSpawn=4
 var mainNode
 

@@ -24,7 +24,7 @@ var startingPosition=Vector2(0,0)
 var windowSize
 var currentSpriteSheetAtlas=AtlasTexture.new()
 var currentSpriteSheetName="Aesomatica"
-var originalGridSize
+var originalGridSize=16
 var tileSheetWidth=16
 var hasLoaded=false
 var config

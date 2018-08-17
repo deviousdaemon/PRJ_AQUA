@@ -41,9 +41,9 @@ func _process(delta):
 	# Update game logic here.
 	if readyToStart==1:
 		gridScaleRatio=worldManager.gridScaleRatio
-		spriteSize=texture.get_width()
+		spriteSize=worldManager.originalGridSize
 		gridSize=worldManager.gridSize
-		spriteScale=gridSize/spriteSize*gridScaleRatio.x
+		spriteScale=gridSize/spriteSize
 		currentSpriteSheetName=worldManager.currentSpriteSheetName
 		spriteAtlasRegion.x*=worldManager.originalGridSize
 		spriteAtlasRegion.y*=worldManager.originalGridSize

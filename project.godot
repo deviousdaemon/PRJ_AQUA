@@ -21,10 +21,6 @@ window/size/height=512
 window/vsync/use_vsync=false
 window/stretch/shrink="1"
 
-[editor_plugins]
-
-enabled=PoolStringArray( "codeandweb.texturepacker" )
-
 [importer_defaults]
 
 texture={

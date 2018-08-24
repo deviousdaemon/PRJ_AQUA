@@ -1168,7 +1168,7 @@ func SpawnObjectsByPacket(spawnPacket, array):
 												newAgent.spriteColor=NewColor(38,136,82,255)
 												newAgent.gridPosition=Vector2(x,y)
 												newAgent.amount=100
-												newAgent.position=Vector2((startingPosition.x+(currentPos.x*gridSize)),(startingPosition.y+(currentPos.y*gridSize)))
+												newAgent.position=Vector2((x*gridSize)+startingPosition.x,(startingPosition.y+(y*gridSize)))
 												containerLevel1.add_child(newAgent)
 												newAgent.readyToStart=1
 												#end

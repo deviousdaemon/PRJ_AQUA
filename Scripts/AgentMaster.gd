@@ -8,6 +8,7 @@ var agentList=[]
 var movementRegistry=[]
 var agentsToSpawn=4
 var mainNode
+var jobs={}
 
 func _ready():
 	mainNode=get_tree().get_root().get_child(0)

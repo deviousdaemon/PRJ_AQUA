@@ -19,15 +19,32 @@ var spriteScale=0
 var currentSpriteSheetName=""
 var gridScaleRatio
 var agentName=""
+var currentState={}
 
 var stepEnabled=false
 
 #subtype specific vars
 	#human
-
+var data= {
+	"stats":{
+		"survival":{
+			"hunger":{
+				"baseAmount":100,
+				"emptyThreshold":20,
+				"fullThreshhold":100
+			},
+			"thirst":{
+				"baseAmount":100,
+				"emptyThreshold":20,
+				"fullThreshhold":100
+			}
+		}
+	}
+}
 
 onready var mainNode=get_tree().get_root().get_child(0)
 onready var worldManager=mainNode.find_node("WorldManager")
+onready var agentManager=mainNode.find_node("AgentMaster")
 
 func _ready():
 	# Called when the node is added to the scene for the first time.
@@ -63,9 +80,117 @@ func _process(delta):
 		#end
 		readyToStart=2
 		pass
+	elif readyToStart==2:
+		if stepEnabled:
+#			CheckSurvival()
+			pass
+		pass
 	pass
-
+	
 func OnWorldStep():
 	if stepEnabled!=true:
 		stepEnabled=true
+	pass
+	
+func CheckSurvival():
+	for stats in data["stats"]["survival"].keys():
+		var statCurrent=data["stats"]["survival"][stats]["baseAmount"]
+		var statEmpty=data["stats"]["survival"][stats]["emptyThreshold"]
+		var statFull=data["stats"]["survival"][stats]["fullThreshold"]
+		if statCurrent<=statEmpty:
+			currentState={"consume":stats}
+			pass
+		pass
+	pass
+	
+func RunState():
+	if currentState.size()!=0:
+		match currentState:
+			"consume":
+				match currentState["consume"]:
+					"hunger":
+						
+						pass
+					"thirst":
+						tileChecks=CheckForResource("water")
+						if tileChecks.size()>0:
+							checkList=GetNearest(tileChecks)
+							if agentManager.jobs.size()==0:
+								
+								pass
+							else:
+								for x in checkedDistances.size()-1:
+									
+									pass
+							pass
+#						var previousCheck=null
+#						var previousDistance=null
+#						var nearestCheck=null
+#						var nearestDistance=null
+#						for check in tileChecks.size():
+#							var checkDistance=GetDistance(gridPosition.x,gridPosition.y,check.x,check.y)
+#							if previousCheck==null:
+#								previousCheck=check
+#								previousDistance=checkDistance
+#								nearestCheck=currentCheck
+#								nearestDistance=checkDistance
+#							else:
+#								if checkDistance<nearestDistance:
+#									nearestCheck=check
+#									nearestDistance=checkDistance
+#									pass
+#								previousCheck=check
+#								previousDistance=checkDistance
+#								pass
+#							pass
+#						pass
+				pass
+		pass
+	pass
+	
+func GetDistance(x1,y1,x2,y2):
+	return sqrt(pow(x2-x1,2)+pow(y2-y1,2)*1.0)
+	pass
+	
+
+func GetNearest(tileChecks):
+	var previousCheck=null
+	var previousDistance=null
+	var nearestCheck=null
+	var nearestDistance=null
+	var distances=[]
+	var checkedTiles=[]
+	for check in tileChecks.size():
+		var checkedDistances=GetDistance(gridPosition.x,gridPosition.y,check.x,check.y)
+		distances.append(checkDistance)
+		checkedTiles.append(check)
+#		if previousCheck==null:
+#			previousCheck=check
+#			previousDistance=checkDistance
+#			nearestCheck=currentCheck
+#			nearestDistance=checkDistance
+#		else:
+#			if checkDistance<nearestDistance:
+#				nearestCheck=check
+#				nearestDistance=checkDistance
+#				pass
+#			previousCheck=check
+#			previousDistance=checkDistance
+#			pass
+		pass
+	pass
+	distances.sort()
+	return distances
+
+func CheckForResource(type):
+	var checks=[]
+	for z in worldManager.worldArray.size()-1:
+		for y in worldManager.worldHeight-1:
+			for x in worldManager.worldWidth-1:
+				if worldManager.worldArray[z][x][y]==type:
+					checks.append(Vector2(x,y))
+					pass
+				pass
+			pass
+	return checks
 	pass

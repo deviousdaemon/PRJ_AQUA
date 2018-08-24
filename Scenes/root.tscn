@@ -1,19 +1,21 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://Scripts/main.gd" type="Script" id=1]
 [ext_resource path="res://Scripts/GDStats.gd" type="Script" id=2]
-[ext_resource path="res://Sprites/blk_sprite.png" type="Texture" id=3]
-[ext_resource path="res://Scripts/WorldManager.gd" type="Script" id=4]
-[ext_resource path="res://Scripts/VisualController.gd" type="Script" id=5]
-[ext_resource path="res://Fonts/PressStart2P.tres" type="DynamicFont" id=6]
-[ext_resource path="res://Fonts/rogue_font.tres" type="DynamicFont" id=7]
-[ext_resource path="res://Scripts/ASCIIManager.gd" type="Script" id=8]
-[ext_resource path="res://Scripts/AgentMaster.gd" type="Script" id=9]
-[ext_resource path="res://Scripts/ConfigManager.gd" type="Script" id=10]
-[ext_resource path="res://Fonts/ShareTechMono.tres" type="DynamicFont" id=11]
-[ext_resource path="res://Scripts/DebugText.gd" type="Script" id=12]
-[ext_resource path="res://Scripts/SpriteGenerator.gd" type="Script" id=13]
-[ext_resource path="res://Scripts/CameraMain.gd" type="Script" id=14]
+[ext_resource path="res://Scripts/CameraMain.gd" type="Script" id=3]
+[ext_resource path="res://Scripts/CameraTarget.gd" type="Script" id=4]
+[ext_resource path="res://Scripts/WorldManager.gd" type="Script" id=5]
+[ext_resource path="res://Scripts/VisualController.gd" type="Script" id=6]
+[ext_resource path="res://Fonts/PressStart2P.tres" type="DynamicFont" id=7]
+[ext_resource path="res://Fonts/rogue_font.tres" type="DynamicFont" id=8]
+[ext_resource path="res://Scripts/ASCIIManager.gd" type="Script" id=9]
+[ext_resource path="res://Scripts/AgentMaster.gd" type="Script" id=10]
+[ext_resource path="res://Scripts/ConfigManager.gd" type="Script" id=11]
+[ext_resource path="res://Scripts/SpriteGenerator.gd" type="Script" id=12]
+[ext_resource path="res://Fonts/ShareTechMono.tres" type="DynamicFont" id=13]
+[ext_resource path="res://Scripts/DebugText.gd" type="Script" id=14]
+[ext_resource path="res://Sprites/background_dirt.png" type="Texture" id=15]
+[ext_resource path="res://Sprites/background_clouds.png" type="Texture" id=16]
 
 [node name="main" type="Node" index="0"]
 
@@ -23,18 +25,45 @@ script = ExtResource( 1 )
 
 script = ExtResource( 2 )
 
-[node name="Background" type="Sprite" parent="." index="1"]
+[node name="CameraMain" type="Camera2D" parent="." index="1"]
 
-scale = Vector2( 16, 16 )
-texture = ExtResource( 3 )
-centered = false
-_sections_unfolded = [ "Offset", "Region", "Transform" ]
+position = Vector2( 256, 256 )
+scale = Vector2( 8, 8 )
+anchor_mode = 1
+rotating = false
+current = true
+zoom = Vector2( 1, 1 )
+limit_left = -4096
+limit_top = -4096
+limit_right = 4096
+limit_bottom = 4096
+limit_smoothed = false
+drag_margin_h_enabled = true
+drag_margin_v_enabled = true
+smoothing_enabled = true
+smoothing_speed = 1.0
+offset_v = 0.0
+offset_h = 0.0
+drag_margin_left = 0.25
+drag_margin_top = 0.25
+drag_margin_right = 0.25
+drag_margin_bottom = 0.25
+editor_draw_screen = false
+editor_draw_limits = false
+editor_draw_drag_margin = false
+script = ExtResource( 3 )
+_sections_unfolded = [ "Drag Margin", "Editor", "Limit", "Offset", "Smoothing", "Transform" ]
 
-[node name="WorldManager" type="Node2D" parent="." index="2"]
+[node name="CameraTarget" type="Node2D" parent="." index="2"]
 
 script = ExtResource( 4 )
+_sections_unfolded = [ "Transform" ]
 
-[node name="EntityContainer" type="Node2D" parent="." index="3"]
+[node name="WorldManager" type="Node2D" parent="." index="3"]
+
+script = ExtResource( 5 )
+
+[node name="EntityContainer" type="Node2D" parent="." index="4"]
 
 _sections_unfolded = [ "Anchor", "Focus", "Grow Direction", "Hint", "Margin", "Material", "Mouse", "Rect", "Size Flags", "Theme", "Visibility" ]
 
@@ -46,11 +75,11 @@ _sections_unfolded = [ "Anchor", "Focus", "Grow Direction", "Hint", "Margin", "M
 
 _sections_unfolded = [ "Transform" ]
 
-[node name="VisualController" type="Node2D" parent="." index="4"]
+[node name="VisualController" type="Node2D" parent="." index="5"]
 
 editor/display_folded = true
 position = Vector2( 32, 32 )
-script = ExtResource( 5 )
+script = ExtResource( 6 )
 _sections_unfolded = [ "Transform", "Visibility", "Z Index" ]
 
 [node name="ASCIIManager" type="RichTextLabel" parent="VisualController" index="0"]
@@ -72,8 +101,8 @@ mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 0
 size_flags_vertical = 0
-custom_fonts/mono_font = ExtResource( 6 )
-custom_fonts/normal_font = ExtResource( 7 )
+custom_fonts/mono_font = ExtResource( 7 )
+custom_fonts/normal_font = ExtResource( 8 )
 bbcode_enabled = true
 bbcode_text = "1511981981"
 visible_characters = -1
@@ -85,76 +114,100 @@ scroll_active = false
 scroll_following = false
 selection_enabled = true
 override_selected_font_color = false
-script = ExtResource( 8 )
+script = ExtResource( 9 )
 _sections_unfolded = [ "Anchor", "BBCode", "Hint", "Margin", "Material", "Mouse", "Rect", "Size Flags", "Theme", "Visibility", "custom_fonts", "custom_styles" ]
 
-[node name="AgentMaster" type="Node2D" parent="." index="5"]
+[node name="AgentMaster" type="Node2D" parent="." index="6"]
 
 position = Vector2( 256, 256 )
 scale = Vector2( 8, 8 )
-script = ExtResource( 9 )
+script = ExtResource( 10 )
 _sections_unfolded = [ "Transform", "Z Index" ]
 
-[node name="ConfigManager" type="Node" parent="." index="6"]
+[node name="ConfigManager" type="Node" parent="." index="7"]
 
-script = ExtResource( 10 )
+script = ExtResource( 11 )
 
-[node name="DebugText" type="Label" parent="." index="7"]
+[node name="SpriteGenerator" type="Node" parent="." index="8"]
+
+script = ExtResource( 12 )
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." index="9"]
+
+layer = 1
+offset = Vector2( 0, 0 )
+rotation = 0.0
+scale = Vector2( 1, 1 )
+transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+
+[node name="DebugText" type="Label" parent="CanvasLayer" index="0"]
 
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 380.0
-margin_top = 4.0
-margin_right = 508.0
-margin_bottom = 22.0
+margin_right = 128.0
+margin_bottom = 18.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 2
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 4
-custom_fonts/font = ExtResource( 11 )
+custom_fonts/font = ExtResource( 13 )
 text = "299 FPS"
 align = 2
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
-script = ExtResource( 12 )
+script = ExtResource( 14 )
 _sections_unfolded = [ "Rect", "custom_constants", "custom_fonts" ]
 
-[node name="SpriteGenerator" type="Node" parent="." index="8"]
+[node name="ParallaxBackground" type="ParallaxBackground" parent="CanvasLayer" index="1"]
 
-script = ExtResource( 13 )
+layer = -1
+offset = Vector2( 0, 0 )
+rotation = 0.0
+scale = Vector2( 1, 1 )
+transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+scroll_offset = Vector2( 0, 0 )
+scroll_base_offset = Vector2( 0, 0 )
+scroll_base_scale = Vector2( 1, 1 )
+scroll_limit_begin = Vector2( 0, 0 )
+scroll_limit_end = Vector2( 0, 0 )
+scroll_ignore_camera_zoom = false
+_sections_unfolded = [ "Scroll" ]
 
-[node name="CameraMain" type="Camera2D" parent="." index="9"]
+[node name="ParallaxLayer" type="ParallaxLayer" parent="CanvasLayer/ParallaxBackground" index="0"]
 
-position = Vector2( 256, 256 )
-scale = Vector2( 8, 8 )
-anchor_mode = 1
-rotating = false
-current = true
-zoom = Vector2( 1, 1 )
-limit_left = -4096
-limit_top = -4096
-limit_right = 4096
-limit_bottom = 4096
-limit_smoothed = true
-drag_margin_h_enabled = true
-drag_margin_v_enabled = false
-smoothing_enabled = false
-smoothing_speed = 5.0
-offset_v = 0.0
-offset_h = 0.0
-drag_margin_left = 0.25
-drag_margin_top = 0.25
-drag_margin_right = 0.25
-drag_margin_bottom = 0.25
-editor_draw_screen = false
-editor_draw_limits = false
-editor_draw_drag_margin = false
-script = ExtResource( 14 )
-_sections_unfolded = [ "Drag Margin", "Editor", "Limit", "Offset", "Transform" ]
+motion_scale = Vector2( 0.65, 0.65 )
+motion_offset = Vector2( 0, 0 )
+motion_mirroring = Vector2( 0, 0 )
+_sections_unfolded = [ "Motion" ]
+
+[node name="Background" type="Sprite" parent="CanvasLayer/ParallaxBackground/ParallaxLayer" index="0"]
+
+position = Vector2( -1024, -1024 )
+texture = ExtResource( 15 )
+centered = false
+region_enabled = true
+region_rect = Rect2( 0, 0, 4096, 4096 )
+_sections_unfolded = [ "Material", "Offset", "Transform", "Visibility", "Z Index" ]
+
+[node name="ParallaxLayer2" type="ParallaxLayer" parent="CanvasLayer/ParallaxBackground" index="1"]
+
+motion_scale = Vector2( 0.75, 0.75 )
+motion_offset = Vector2( 0, 0 )
+motion_mirroring = Vector2( 0, 0 )
+_sections_unfolded = [ "Motion" ]
+
+[node name="Background" type="Sprite" parent="CanvasLayer/ParallaxBackground/ParallaxLayer2" index="0"]
+
+position = Vector2( -1024, -1024 )
+texture = ExtResource( 16 )
+centered = false
+region_enabled = true
+region_rect = Rect2( 0, 0, 4096, 4096 )
+_sections_unfolded = [ "Material", "Offset", "Transform", "Visibility", "Z Index" ]
 
 

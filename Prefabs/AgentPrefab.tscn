@@ -2,7 +2,7 @@
 
 [ext_resource path="res://Scripts/AgentPrefab.gd" type="Script" id=1]
 
-[node name="AgentPrefab" type="Sprite"]
+[node name="AgentPrefab" type="Sprite" index="0"]
 
 centered = false
 script = ExtResource( 1 )
